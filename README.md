@@ -278,14 +278,11 @@ File.open("files/source.txt", "r") do |text|
         if dictionary.has_key?(lowercase_word)
           replacement = dictionary[lowercase_word]
           
-          if word == word.downcase
-            "<#{replacement}>"
-          elsif word == word.capitalize
-            "^#{replacement}>"
-          elsif word == word.upcase
-            "^#{replacement}^"
-          else
-            replacement
+          case word
+          when word.upcase then     "^#{replacement}^"
+          when word.downcase then   "<#{replacement}>"
+          when word.capitalize then "^#{replacement}>"
+          else replacement
           end
         else
           word
