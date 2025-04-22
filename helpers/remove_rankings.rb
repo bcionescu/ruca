@@ -7,7 +7,6 @@ def remove_rankings
   $new_text = ""
 
   File.open(sorted_path, "r") do |text|
-    
     text.readlines.each do |line|
       line = line.chomp.gsub(/ .*/, "")
       $new_text += "#{line}\n"
