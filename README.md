@@ -35,77 +35,90 @@ The beauty of this utility is that you can train it on whatever material you wan
 Before we begin sorting the list by popularity, we should first sort it by length, with the shortest words first. Most of the list will be changed when we run the programs below; however, the words with an occurrence of 0 in the training data will grow in size as the list goes on. This way, the longer words will get the longer mini-expression.
 
 ```ruby
-file_path = 'data/words.txt'
-lines = File.readlines(file_path)
+def sort_words_by_length
+  root = File.expand_path("../../", __FILE__)
+  
+  words_path = "#{root}/data/words.txt"
+  lines = File.readlines(words_path)
 
-sorted_lines = lines.sort_by(&:length)
+  sorted_lines = lines.sort_by(&:length)
 
-File.open('data/words.txt', 'w') do |file|
-  sorted_lines.each { |line| file.puts(line) }
+  File.open(words_path, "w") do |file|
+    sorted_lines.each { |line| file.puts(line) }
+  end
 end
 ```
 
 Now we can begin the training. The code below iterates through my word list and calculates the number of times each word appears in the provided training material. The `.rb` file, as well as all the other snippets of code, are also available above, in the repo.
 
 ```ruby
-$new_words = ""
+def training
+  root = File.expand_path("../../", __FILE__)
 
-File.open("data/training.txt", "r") do |text|
-  text = text.read.downcase()
-  $training_words = text.scan(/\b[\w']+\b/)
-end
+  training_path = "#{root}/data/training.txt"
+  sorted_path   = "#{root}/data/sorted.txt"
+  words_path    = "#{root}/data/words.txt"
+  
+  $new_words = ""
 
-word_counts = []
-File.open("data/words.txt", "r") do |text|
-  text.readlines.each do |line|
-    line = line.chomp
-    count = $training_words.count(line)
-    puts "#{line} #{count}"
-    word_counts << { word: line, count: count }
+  File.open(training_path, "r") do |text|
+    text = text.read.downcase()
+    $training_words = text.scan(/\b[\w']+\b/)
   end
-end
 
-word_counts.sort_by! { |entry| -entry[:count] }
+  word_counts = []
+  File.open(words_path, "r") do |text|
+    text.readlines.each do |line|
+      line = line.chomp
+      count = $training_words.count(line)
+      puts "#{line} #{count}"
+      word_counts << { word: line, count: count }
+    end
+  end
 
-$new_words = word_counts.map { |entry| "#{entry[:word]} #{entry[:count]}" }.join("\n") + "\n"
+  word_counts.sort_by! { |entry| -entry[:count] }
 
-File.open("data/sorted.txt", "w") do |file|
-  file.write($new_words)
+  $new_words = word_counts.map { |entry| "#{entry[:word]} #{entry[:count]}" }.join("\n") + "\n"
+
+  File.open(sorted_path", "w") do |file|
+    file.write($new_words)
+  end
 end
 ```
 
 Once the training is finished, a number is added next to each word in the list, separated by a space. Once each word has been examined, the list is sorted in descending order by the number of occurrences. I'll now break down the code above into smaller pieces and explain how it works.
 
 ```ruby
-File.open("data/training.txt", "r") do |text|
-  text = text.read.downcase()
-  $training_words = text.scan(/\b[\w']+\b/)
-end
+  File.open(training_path, "r") do |text|
+    text = text.read.downcase()
+    $training_words = text.scan(/\b[\w']+\b/)
+  end
 ```
 
 The above opens the `training.txt` file, attributes its contents to a variable, and makes it all lowercase. Then, a regex is used to scan through the text, find the boundaries of the words, and then extract them.
 
 ```ruby
-word_counts = []
-File.open("data/words.txt", "r") do |text|
-  text.readlines.each do |line|
-    line = line.chomp
-    count = $training_words.count(line)
-    puts "#{line} #{count}"
-    word_counts << { word: line, count: count }
+  word_counts = []
+  File.open(words_path, "r") do |text|
+    text.readlines.each do |line|
+      line = line.chomp
+      count = $training_words.count(line)
+      puts "#{line} #{count}"
+      word_counts << { word: line, count: count }
+    end
   end
-end
 ```
 
 Next up, we open the words.txt file, which is the word list I have assembled, and we count how many times each word appears in the training data. We then add the word, with its word count, to the `word_counts` array.
 
 ```ruby
-word_counts.sort_by! { |entry| -entry[:count] }
+  word_counts.sort_by! { |entry| -entry[:count] }
 
-$new_words = word_counts.map { |entry| "#{entry[:word]} #{entry[:count]}" }.join("\n") + "\n"
+  $new_words = word_counts.map { |entry| "#{entry[:word]} #{entry[:count]}" }.join("\n") + "\n"
 
-File.open("data/sorted.txt", "w") do |file|
-  file.write($new_words)
+  File.open(sorted_path", "w") do |file|
+    file.write($new_words)
+  end
 end
 ```
 
@@ -136,18 +149,24 @@ were 3882
 The most commonly used word appears first, the second most common appears second, and so on. The code below describes how the list is then cleaned of numbers and the extra space, to allow only the words.
 
 ```ruby
-$new_text = ""
+def remove_rankings
+  root = File.expand_path("../../", __FILE__)
 
-File.open("data/sorted.txt", "r") do |text|
+  sorted_path = "#{root}/data/sorted.txt"
+  words_path  = "#{root}/data/words.txt"
   
-  text.readlines.each do |line|
-    line = line.chomp.gsub(/ .*/, "")
-    $new_text += "#{line}\n"
-  end
-end
+  $new_text = ""
 
-File.open("data/words.txt", "w") do |file|
-  file.write($new_text)
+  File.open(sorted_path, "r") do |text|
+    text.readlines.each do |line|
+      line = line.chomp.gsub(/ .*/, "")
+      $new_text += "#{line}\n"
+    end
+  end
+
+  File.open(words_path, "w") do |file|
+    file.write($new_text)
+  end
 end
 ```
 
@@ -178,39 +197,45 @@ Assuming the shorthand for the word *patterns* is "$", the mapper for " patterns
 In rare cases, where the text is all upper case, as in " PATTERNS " it would be "1^$^1". This means that `^` would have to be excluded from the list of possible symbols we could use for shorthand, along with digits.
 
 ```ruby
-visible_chars = []
-visible_chars.concat(('A'..'Z').to_a)
-visible_chars.concat(('a'..'z').to_a)
-(33..126).each do |ascii|
-  char = ascii.chr
-  next if char == '^' || char == "<" || char == ">"
-  visible_chars << char
-end
-visible_chars.uniq!
+root = File.expand_path("../../", __FILE__)
 
-def generate_combinations(charset)
-  Enumerator.new do |yielder|
-    length = 1
-    loop do
-      charset.repeated_permutation(length).each do |combo|
-        yielder << combo.join
+words_path = "#{root}/data/words.txt"
+mappers_path = "#{root}/data/mappers.txt"
+
+def generate_expressions
+  visible_chars = []
+  visible_chars.concat(('A'..'Z').to_a)
+  visible_chars.concat(('a'..'z').to_a)
+  (33..126).each do |ascii|
+    char = ascii.chr
+    next if char == '^' || char == "<" || char == ">"
+    visible_chars << char
+  end
+  visible_chars.uniq!
+
+  def generate_combinations(charset)
+    Enumerator.new do |yielder|
+      length = 1
+      loop do
+        charset.repeated_permutation(length).each do |combo|
+          yielder << combo.join
+        end
+        length += 1
       end
-      length += 1
+    end
+  end
+
+  words = File.readlines(words_path, chomp: true)
+
+  combinations = generate_combinations(visible_chars)
+
+  File.open(mappers_path, 'w') do |file|
+    words.each do |word|
+      combo = combinations.next
+      file.puts "#{word} #{combo}"
     end
   end
 end
-
-words = File.readlines("data/words.txt", chomp: true)
-
-combinations = generate_combinations(visible_chars)
-
-File.open("data/mappers.txt", 'w') do |file|
-  words.each do |word|
-    combo = combinations.next
-    file.puts "#{word} #{combo}"
-  end
-end
-
 ```
 
 The code above creates a list of acceptable characters to use for the mini-expressions, excluding `^`, `<`, and `>`, as these are reserved for the wrapper. We then import all the words in our list, and we generate a mini-expression for each. Here is what some of the list looks like, based on my training data.
@@ -306,11 +331,33 @@ The above loads the `mappers.txt` file into a dictionary or a hash, storing each
 If it is lowercase, we replace the word with its mini-expression, and we wrap it with `<>`. If it is uppercase, we wrap its shorthand with `^^`. If it is capitalised, we wrap its value with `^>`. Finally, if it's none of the above, we simply put the word back. This can occur with something like camelCase. The final result is then written to `output.ruca`. Below you will find an example of text in its original form, and what it looks like once compressed.
 
 ```original
-When we started, the crowd round the inn door, which had by this time swelled to a considerable size, all made the sign of the cross and pointed two fingers towards me. With some difficulty I got a fellow-passenger to tell me what they meant; he would not answer at first, but on learning that I was English, he explained that it was a charm or guard against the evil eye. This was not very pleasant for me, just starting for an unknown place to meet an unknown man; but every one seemed so kind-hearted, and so sorrowful, and so sympathetic that I could not but be touched.
+When we started, the crowd round the inn door, 
+which had by this time swelled to a considerable 
+size, all made the sign of the cross and pointed 
+two fingers towards me. With some difficulty I 
+got a fellow-passenger to tell me what they meant; 
+he would not answer at first, but on learning that 
+I was English, he explained that it was a charm or 
+guard against the evil eye. This was not very 
+pleasant for me, just starting for an unknown place 
+to meet an unknown man; but every one seemed so 
+kind-hearted, and so sorrowful, and so sympathetic 
+that I could not but be touched.
 ```
 
 ```compressed
-^N> we <Ub>, the <ok> <B[> the inn <B]>, <J> had by <C> <n> <74> to a <U2> <k[>, all <+> the <LB> of the <Ip> and <R8> two <QC> <Cq> me. ^B> <d> <bG> I got a <B8>-<8%> to <(> me <F> <L> <K)>; he <O> not <BU> at <s>, but on <cn> <A> I was ^E:>, he <t:> <A> it was a <Va> or <H}> <Af> the <I6> eye. ^C> was not <t> <O]> for me, <Bp> <nd> for an <Md> <AZ> to <CE> an <Md> man; but <AB> one <A~> so <B$>-<UQ>, and so <(6>, and so <A't> <A> I <q> not but be <Sh>.
+^N> we <Ub>, the <ok> <B[> the inn <B]>, 
+<J> had by <C> <n> <74> to a <U2> 
+<k[>, all <+> the <LB> of the <Ip> and <R8> 
+two <QC> <Cq> me. ^B> <d> <bG> I 
+got a <B8>-<8%> to <(> me <F> <L> <K)>; 
+he <O> not <BU> at <s>, but on <cn> <A> 
+I was ^E:>, he <t:> <A> it was a <Va> or 
+<H}> <Af> the <I6> eye. ^C> was not <t> 
+<O]> for me, <Bp> <nd> for an <Md> <AZ> 
+to <CE> an <Md> man; but <AB> one <A~> so 
+<B$>-<UQ>, and so <(6>, and so <A't> 
+<A> I <q> not but be <Sh>.
 ```
 
 The original text measures 574 bytes, whereas the compressed text measures only 458 bytes—an improvement of around 20%. When compressed with `.zip`, the resulting file was 488 bytes, and a `.7zip` compression achieved 527 bytes.
