@@ -7,7 +7,6 @@ mappers   = "#{root}/data/mappers.txt"
 source    = "#{root}/files/source.txt"
 output    = "#{root}/files/extracted.txt"
 
-
 dictionary = {}
 
 File.open(mappers, "r") do |mappers|
