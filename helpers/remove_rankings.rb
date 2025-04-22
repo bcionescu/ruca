@@ -1,5 +1,4 @@
 def remove_rankings
-
   root = File.expand_path("../../", __FILE__)
 
   sorted_path = "#{root}/data/sorted.txt"
