@@ -3,9 +3,9 @@ require_relative "integrity.rb"
 root = File.expand_path("../../", __FILE__)
 
 ruca_file = "#{root}/files/output.ruca"
-mappers =   "#{root}/data/mappers.txt"
-source =    "#{root}/files/source.txt"
-output =    "#{root}/files/extracted.txt"
+mappers   = "#{root}/data/mappers.txt"
+source    = "#{root}/files/source.txt"
+output    = "#{root}/files/extracted.txt"
 
 
 dictionary = {}
