@@ -1,3 +1,8 @@
+root = File.expand_path("../../", __FILE__)
+
+words_path = "#{root}/data/words.txt"
+mappers_path = "#{root}/data/mappers.txt"
+
 def generate_expressions
   visible_chars = []
   visible_chars.concat(('A'..'Z').to_a)
@@ -21,11 +26,11 @@ def generate_expressions
     end
   end
 
-  words = File.readlines("data/words.txt", chomp: true)
+  words = File.readlines(words_path, chomp: true)
 
   combinations = generate_combinations(visible_chars)
 
-  File.open("data/mappers.txt", 'w') do |file|
+  File.open(mappers_path, 'w') do |file|
     words.each do |word|
       combo = combinations.next
       file.puts "#{word} #{combo}"
