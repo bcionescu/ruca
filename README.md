@@ -421,7 +421,19 @@ end
 integrity(source, output)
 ```
 
-At the end, the `integrity` method is called, the role of which is to generate an MD5 hash of the original file and the extracted one. This will ensure the two files are identical and that no conflicts have occurred.
+At the end, the `integrity` method is called, the role of which is to generate an MD5 hash of the original file and the extracted one. This will ensure the two files are identical and that no conflicts have occurred. The method can be seen below.
+
+```ruby
+require 'digest'
+
+def integrity(source, output)
+  hash1 = Digest::MD5.file(source).hexdigest
+  hash2 = Digest::MD5.file(output).hexdigest
+
+  puts "source: #{hash1}"
+  puts "putput: #{hash2}"
+end
+```
 
 ## Separation
 
