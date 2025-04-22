@@ -380,12 +380,53 @@ When compressing the entirety of Bram Stoker's *Dracula*, however, it was a diff
 
 It is evident that the ZIP and 7-Zip` algorithms become more efficient with scale.
 
+## Extraction
+
+Given that each word can have three possible mappers, a simple way to extract the data would be to go through the word list and look for the three possible mappers in the text, based on the expression. If found, replace it with the original word. This approach is less efficient, as we have to go through the entire word list. However, it is far less prone to conflicts. This is the current implementation for this.
+
+```ruby
+require_relative "integrity.rb"
+
+root = File.expand_path("../../", __FILE__)
+
+ruca_file = "#{root}/files/output.ruca"
+mappers   = "#{root}/data/mappers.txt"
+source    = "#{root}/files/source.txt"
+output    = "#{root}/files/extracted.txt"
+
+dictionary = {}
+
+File.open(mappers, "r") do |mappers|
+  mappers.readlines.each do |line|
+    words = line.split
+    key, value = words[0], words[1]
+    dictionary[key] = value
+  end
+end
+
+File.open(ruca_file, "r") do |text|
+  content = text.read
+
+  dictionary.each do |key, value|
+    content.gsub!("<#{value}>", key)
+    content.gsub!("^#{value}>", key.capitalize)
+    content.gsub!("^#{value}^", key.upcase)
+  end
+
+  File.open(output, "w") do |file|
+    file.write(content)
+  end
+end
+
+integrity(source, output)
+```
+
+At the end, the `integrity` method is called, the role of which is to generate an MD5 hash of the original file and the extracted one. This will ensure the two files are identical and that no conflicts have occurred.
+
+## Separation
+
+Now that the code is beginning to take shape, I'm going to start unifying things. The idea is to have one .rb file, which will take arguments via the terminal, and call upon various other .rb files in the `helpers` directory, each providing a method. This has not been implemented yet, but it will be soon.
+
 ## Future Improvements
 
-A potential way to improve the algorithm even further is to include common expressions instead of just words. Replacing an entire sentence with a 3-character mapper would be quite the improvement.
-
-Additionally, I would also need to implement the decompression algorithm. Given that I am running out of time, my current knowledge of Ruby is preventing me from successfully implementing decompression at this time. It turns out that interpreting the compressed text and correctly identifying the mappers is quite a bit more difficult than putting them in place to begin with.
-
-A not-very-elegant solution could be as follows: given that each word can only have a total of three different mini-expressions, `eg: <aP> ^aP> ^aP^`, we could simply include those in the `mappers.txt` file. When decompressing, if a mapper is found in the text, simply replace it with the corresponding word. Not very elegant, but it *would* work.
-
-I will spend the next week learning a lot more Ruby. Also, I will eventually implement decompression and other improvements at a later date.
+A potential way to improve the algorithm further is to include common expressions instead of just words. Replacing an entire sentence with a 3-character mapper would be quite efficient.
