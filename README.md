@@ -47,14 +47,19 @@ def sort_words_by_length
     sorted_lines.each { |line| file.puts(line) }
   end
 end
+
 ```
 
 Now we can begin the training. The code below iterates through my word list and calculates the number of times each word appears in the provided training material. The `.rb` file, as well as all the other snippets of code, are also available above, in the repo.
 
 ```ruby
+require_relative "sort_words_by_length.rb"
+require_relative "remove_rankings.rb"
+require_relative "generate_expressions.rb"
+
 def training
   root = File.expand_path("../../", __FILE__)
-
+  
   training_path = "#{root}/data/training.txt"
   words_path    = "#{root}/data/words.txt"
   
@@ -70,7 +75,7 @@ def training
     text.readlines.each do |line|
       line = line.chomp
       count = $training_words.count(line)
-      puts "#{line} #{count}"
+      # puts "#{line} #{count}"
       word_counts << { word: line, count: count }
     end
   end
@@ -79,9 +84,29 @@ def training
 
   $new_words = word_counts.map { |entry| "#{entry[:word]} #{entry[:count]}" }.join("\n") + "\n"
 
-  File.open(words_path", "w") do |file|
+  File.open(words_path, "w") do |file|
     file.write($new_words)
   end
+end
+
+def initiate_training
+  puts "> Sorting the word list by length"
+  STDOUT.flush
+  sort_words_by_length
+
+  puts "> Training the algorithm"
+  STDOUT.flush
+  training
+
+  puts "> Removing the word rankings"
+  STDOUT.flush
+  remove_rankings
+
+  puts "> Generating the mini-expressions"
+  STDOUT.flush
+  generate_expressions
+
+  puts "> Finished!"
 end
 ```
 
@@ -102,7 +127,7 @@ The above opens the `training.txt` file, attributes its contents to a variable, 
     text.readlines.each do |line|
       line = line.chomp
       count = $training_words.count(line)
-      puts "#{line} #{count}"
+      # puts "#{line} #{count}"
       word_counts << { word: line, count: count }
     end
   end
@@ -111,11 +136,11 @@ The above opens the `training.txt` file, attributes its contents to a variable, 
 Next up, we open the words.txt file, which is the word list I have assembled, and we count how many times each word appears in the training data. We then add the word, with its word count, to the `word_counts` array.
 
 ```ruby
-  word_counts.sort_by! { |entry| -entry[:count] }
+word_counts.sort_by! { |entry| -entry[:count] }
 
   $new_words = word_counts.map { |entry| "#{entry[:word]} #{entry[:count]}" }.join("\n") + "\n"
 
-  File.open(sorted_path", "w") do |file|
+  File.open(words_path, "w") do |file|
     file.write($new_words)
   end
 end
@@ -151,12 +176,11 @@ The most commonly used word appears first, the second most common appears second
 def remove_rankings
   root = File.expand_path("../../", __FILE__)
 
-  sorted_path = "#{root}/data/sorted.txt"
   words_path  = "#{root}/data/words.txt"
   
   $new_text = ""
 
-  File.open(sorted_path, "r") do |text|
+  File.open(words_path, "r") do |text|
     text.readlines.each do |line|
       line = line.chomp.gsub(/ .*/, "")
       $new_text += "#{line}\n"
@@ -196,12 +220,12 @@ Assuming the shorthand for the word *patterns* is "$", the mapper for " patterns
 In rare cases, where the text is all upper case, as in " PATTERNS " it would be "1^$^1". This means that `^` would have to be excluded from the list of possible symbols we could use for shorthand, along with digits.
 
 ```ruby
-root = File.expand_path("../../", __FILE__)
-
-words_path = "#{root}/data/words.txt"
-mappers_path = "#{root}/data/mappers.txt"
-
 def generate_expressions
+  root = File.expand_path("../../", __FILE__)
+
+  words_path   = "#{root}/data/words.txt"
+  mappers_path = "#{root}/data/mappers.txt"
+
   visible_chars = []
   visible_chars.concat(('A'..'Z').to_a)
   visible_chars.concat(('a'..'z').to_a)
@@ -277,52 +301,56 @@ When decompression happens, any instance of `<!<` and `>!>` would simply be remo
 
 ## Compression
 
-Now that the list is complete, we can compress text. Here is the program.
+Now that the list is complete, we can compress text.
 
 ```ruby
-dictionary = {}
+def compress
+      
+  dictionary = {}
 
-File.open("data/mappers.txt", "r") do |text|
-  text.readlines.each do |line|
-    words = line.split
-    key, value = words
-    dictionary[key] = value
+  File.open("data/mappers.txt", "r") do |text|
+    text.readlines.each do |line|
+      words = line.split
+      key, value = words
+      dictionary[key] = value
+    end
   end
-end
 
-processed_content = ""
-File.open("files/source.txt", "r") do |text|
-  text.readlines.each do |line|
-    words = line.split(/(\W+)/)
-    transformed_words = words.map do |word|
+  processed_content = ""
+  File.open("files/source.txt", "r") do |text|
+    text.readlines.each do |line|
+      words = line.split(/(\W+)/)
+      transformed_words = words.map do |word|
 
-      if word.match?(/\w+/)
-        lowercase_word = word.downcase
-        
-        if dictionary.has_key?(lowercase_word)
-          replacement = dictionary[lowercase_word]
+        if word.match?(/\w+/)
+          lowercase_word = word.downcase
           
-          case word
-          when word.upcase then     "^#{replacement}^"
-          when word.downcase then   "<#{replacement}>"
-          when word.capitalize then "^#{replacement}>"
-          else replacement
+          if dictionary.has_key?(lowercase_word)
+            replacement = dictionary[lowercase_word]
+            
+            case word
+            when word.upcase then     "^#{replacement}^"
+            when word.downcase then   "<#{replacement}>"
+            when word.capitalize then "^#{replacement}>"
+            else replacement
+            end
+          else
+            word
           end
         else
           word
         end
-      else
-        word
       end
-    end
 
-    processed_content += transformed_words.join
+      processed_content += transformed_words.join
+    end
+  end
+
+  File.open("files/output.ruca", "w") do |file|
+    file.write(processed_content)
   end
 end
 
-File.open("files/output.ruca", "w") do |file|
-  file.write(processed_content)
-end
 ```
 
 The above loads the `mappers.txt` file into a dictionary or a hash, storing each word and its assigned mini-expression as a key-value pair. Then, the text to be compressed is loaded from `source.txt`. Everything is then split up and placed into an array. As we iterate through each element of this array, we check if it is a word or just punctuation. If it's punctuation, we just put it back. However, if it is a word, we check for capitalisation.
@@ -384,40 +412,44 @@ It is evident that the ZIP and 7-Zip` algorithms become more efficient with scal
 Given that each word can have three possible mappers, a simple way to extract the data would be to go through the word list and look for the three possible mappers in the text, based on the expression. If found, replace it with the original word. This approach is less efficient, as we have to go through the entire word list. However, it is far less prone to conflicts. This is the current implementation for this.
 
 ```ruby
-require_relative "integrity.rb"
+def extract
 
-root = File.expand_path("../../", __FILE__)
+  require_relative "integrity.rb"
 
-ruca_file = "#{root}/files/output.ruca"
-mappers   = "#{root}/data/mappers.txt"
-source    = "#{root}/files/source.txt"
-output    = "#{root}/files/extracted.txt"
+  root = File.expand_path("../../", __FILE__)
 
-dictionary = {}
+  ruca_file = "#{root}/files/output.ruca"
+  mappers   = "#{root}/data/mappers.txt"
+  source    = "#{root}/files/source.txt"
+  output    = "#{root}/files/extracted.txt"
 
-File.open(mappers, "r") do |mappers|
-  mappers.readlines.each do |line|
-    words = line.split
-    key, value = words[0], words[1]
-    dictionary[key] = value
+  dictionary = {}
+
+  File.open(mappers, "r") do |mappers|
+    mappers.readlines.each do |line|
+      words = line.split
+      key, value = words[0], words[1]
+      dictionary[key] = value
+    end
   end
+
+  File.open(ruca_file, "r") do |text|
+    content = text.read
+
+    dictionary.each do |key, value|
+      content.gsub!("<#{value}>", key)
+      content.gsub!("^#{value}>", key.capitalize)
+      content.gsub!("^#{value}^", key.upcase)
+    end
+
+    File.open(output, "w") do |file|
+      file.write(content)
+    end
+  end
+
+  integrity(source, output)
 end
 
-File.open(ruca_file, "r") do |text|
-  content = text.read
-
-  dictionary.each do |key, value|
-    content.gsub!("<#{value}>", key)
-    content.gsub!("^#{value}>", key.capitalize)
-    content.gsub!("^#{value}^", key.upcase)
-  end
-
-  File.open(output, "w") do |file|
-    file.write(content)
-  end
-end
-
-integrity(source, output)
 ```
 
 At the end, the `integrity` method is called, the role of which is to generate an MD5 hash of the original file and the extracted one. This will ensure the two files are identical and that no conflicts have occurred. The method can be seen below.
@@ -434,10 +466,47 @@ def integrity(source, output)
 end
 ```
 
-## Separation
+## Utility
 
-Now that the code is beginning to take shape, I'm going to start unifying things. The idea is to have one .rb file, which will take arguments via the terminal, and call upon various other .rb files in the `helpers` directory, each providing a method. This has not been implemented yet, but it will be soon.
+Finally, all the code above comes together as one utility, which can be given arguments from the terminal. Executing `ruby ruca.rb -c` will compress the file, `-x` will extract the file, `-t` will initiate a training session, and `-h` will help guide you, if needed.
+
+```ruby
+require_relative "helpers/compress.rb"
+require_relative "helpers/extract.rb"
+require_relative "helpers/training.rb"
+
+require 'optparse'
+
+options = {}
+
+option_parser = OptionParser.new do |argument|
+  argument.banner = "Usage: ruby ruca.rb [options]"
+
+  argument.on("-c", "--compress", "Compress a file") do
+    options[:compress] = true
+  end
+
+  argument.on("-x", "--extract", "Extract a file") do
+    options[:extract] = true
+  end
+
+  argument.on("-t", "--train", "Train the algorithm") do
+    options[:train] = true
+  end
+
+  argument.on("-h", "--help", "Get help") do
+    puts option
+    exit
+  end
+end
+
+option_parser.parse!
+
+compress if options[:compress]
+extract if options[:extract]
+initiate_training if options[:train]
+```
 
 ## Future Improvements
 
-A potential way to improve the algorithm further is to include common expressions instead of just words. Replacing an entire sentence with a 3-character mapper would be quite efficient.
+A potential way to improve the algorithm further is to include common expressions instead of just words. Replacing an entire sentence with a 3-character mapper would be quite efficient. Additionally, I need to implement a method for the user to specify the path to a file to compress/extract, as the code only currently allows for fixed paths.
