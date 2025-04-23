@@ -34,20 +34,22 @@ def training
   end
 end
 
-puts "> Sorting the word list by length"
-STDOUT.flush
-# sort_words_by_length
+def initiate_training
+  puts "> Sorting the word list by length"
+  STDOUT.flush
+  sort_words_by_length
 
-puts "> Training the algorithm"
-STDOUT.flush
-# training
+  puts "> Training the algorithm"
+  STDOUT.flush
+  training
 
-puts "> Removing the word rankings"
-STDOUT.flush
-# remove_rankings
+  puts "> Removing the word rankings"
+  STDOUT.flush
+  remove_rankings
 
-puts "> Generating the mini-expressions"
-STDOUT.flush
-generate_expressions
+  puts "> Generating the mini-expressions"
+  STDOUT.flush
+  generate_expressions
 
-puts "> Finished!"
+  puts "> Finished!"
+end
