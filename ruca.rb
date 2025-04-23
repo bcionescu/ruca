@@ -30,5 +30,5 @@ end
 option_parser.parse!
 
 compress if options[:compress]
-extract  if options[:extract]
-training if options[:train]
+extract if options[:extract]
+initiate_training if options[:train]
