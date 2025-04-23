@@ -2,7 +2,6 @@ def training
   root = File.expand_path("../../", __FILE__)
 
   training_path = "#{root}/data/training.txt"
-  sorted_path   = "#{root}/data/sorted.txt"
   words_path    = "#{root}/data/words.txt"
   
   $new_words = ""
@@ -26,7 +25,7 @@ def training
 
   $new_words = word_counts.map { |entry| "#{entry[:word]} #{entry[:count]}" }.join("\n") + "\n"
 
-  File.open(sorted_path", "w") do |file|
+  File.open(words_path", "w") do |file|
     file.write($new_words)
   end
 end
