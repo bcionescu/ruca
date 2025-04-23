@@ -1,43 +1,34 @@
-dictionary = {}
+require_relative "helpers/compress.rb"
+require_relative "helpers/extract.rb"
+require_relative "helpers/training.rb"
 
-File.open("data/mappers.txt", "r") do |text|
-  text.readlines.each do |line|
-    words = line.split
-    key, value = words
-    dictionary[key] = value
+require 'optparse'
+
+options = {}
+
+option_parser = OptionParser.new do |argument|
+  argument.banner = "Usage: ruby ruca.rb [options]"
+
+  argument.on("-c", "--compress", "Compress a file") do
+    options[:compress] = true
+  end
+
+  argument.on("-x", "--extract", "Extract a file") do
+    options[:extract] = true
+  end
+
+  argument.on("-t", "--train", "Train the algorithm") do
+    options[:train] = true
+  end
+
+  argument.on("-h", "--help", "Get help") do
+    puts option
+    exit
   end
 end
 
-processed_content = ""
-File.open("files/source.txt", "r") do |text|
-  text.readlines.each do |line|
-    words = line.split(/(\W+)/)
-    transformed_words = words.map do |word|
+option_parser.parse!
 
-      if word.match?(/\w+/)
-        lowercase_word = word.downcase
-        
-        if dictionary.has_key?(lowercase_word)
-          replacement = dictionary[lowercase_word]
-          
-          case word
-          when word.upcase then     "^#{replacement}^"
-          when word.downcase then   "<#{replacement}>"
-          when word.capitalize then "^#{replacement}>"
-          else replacement
-          end
-        else
-          word
-        end
-      else
-        word
-      end
-    end
-
-    processed_content += transformed_words.join
-  end
-end
-
-File.open("files/output.ruca", "w") do |file|
-  file.write(processed_content)
-end
+compress if options[:compress]
+extract  if options[:extract]
+training if options[:train]
