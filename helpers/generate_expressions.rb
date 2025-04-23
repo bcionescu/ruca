@@ -1,9 +1,9 @@
-root = File.expand_path("../../", __FILE__)
-
-words_path = "#{root}/data/words.txt"
-mappers_path = "#{root}/data/mappers.txt"
-
 def generate_expressions
+  root = File.expand_path("../../", __FILE__)
+
+  words_path   = "#{root}/data/words.txt"
+  mappers_path = "#{root}/data/mappers.txt"
+
   visible_chars = []
   visible_chars.concat(('A'..'Z').to_a)
   visible_chars.concat(('a'..'z').to_a)
