@@ -462,7 +462,7 @@ def integrity(source, output)
   hash2 = Digest::MD5.file(output).hexdigest
 
   puts "source: #{hash1}"
-  puts "putput: #{hash2}"
+  puts "output: #{hash2}"
 end
 ```
 
