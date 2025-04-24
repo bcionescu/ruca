@@ -195,7 +195,7 @@ def remove_rankings
 end
 ```
 
-The code goes through each line, one by one, and a regex expression is used in order for `gsub` to substitute everything `.*` after the first space with nothing.
+The code goes through each line, one by one, and regex is used in order for `gsub` to substitute everything `.*` after the first space with nothing.
 
 ## Shorthand
 
