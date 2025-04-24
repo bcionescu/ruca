@@ -1,5 +1,7 @@
 # ruca
 
+![ruca.rb](/data/ruca.png)
+
 Hey again, I hope you're finding my cover letter interesting so far. This is the project that I'm building for my application to 37signals—specifically for the Junior Rails Programmer position. This is `ruca`, or **Ru**by **C**ompression **A**lgorithm.
 
 Data compression is fascinating. Using logic, one can take a certain amount of information, shrink it, and then decompress it again, losing (ideally) none of the original information. The premise of the project is this: if data compression did not exist, how would *I* build it?
