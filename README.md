@@ -34,7 +34,7 @@ To determine how "popular" a word is, the algorithm needs to be "trained". In or
 
 The beauty of this utility is that you can train it on whatever material you want, and the compression would become more effective in that domain. For example, you could train it on medical journals, and since the shortest mini-expressions would be assigned the most common words in that field, you'd get a better compression ratio.
 
-Before we begin sorting the list by popularity, we should first sort it by length, with the shortest words first. Most of the list will be changed when we run the programs below; however, the words with an occurrence of 0 in the training data will grow in size as the list goes on. This way, the longer words will get the longer mini-expression.
+Before we begin sorting the list by popularity, we should first sort it by length, with the shortest words first. Most of the list will be changed when we run the programs below; however, the words with an occurrence of 0 in the training data will grow in size as the list goes on. This way, the longer words will get the longer mini-expressions.
 
 ```ruby
 def sort_words_by_length
