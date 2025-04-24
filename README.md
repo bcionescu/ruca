@@ -512,3 +512,5 @@ initiate_training if options[:train]
 ## Future Improvements
 
 A potential way to improve the algorithm further is to include common expressions instead of just words. Replacing an entire sentence with a 3-character mapper would be quite efficient. Additionally, I need to implement a method for the user to specify the path to a file to compress/extract, as the code only currently allows for fixed paths.
+
+Finally, it might make sense to have a version of this algorithm that takes each word in a text and assigns it a mapper. This means that it would be far less efficient with small files, but potentially vastly more efficient with larger ones. Also, we wouldn't need a word list. One would be generated for every individual file and stored within it.
