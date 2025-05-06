@@ -178,7 +178,7 @@ The most commonly used word appears first, the second most common appears second
 def remove_rankings
   root = File.expand_path("../../", __FILE__)
 
-  words_path  = "#{root}/data/words.txt"
+  words_path = "#{root}/data/words.txt"
   
   $new_text = ""
 
