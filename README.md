@@ -2,9 +2,9 @@
 
 ![ruca.rb](/data/ruca.png)
 
-Hey again, I hope you're finding my cover letter interesting so far. This is the project that I'm building for my application to 37signals—specifically for the Junior Rails Programmer position. This is `ruca`, or **Ru**by **C**ompression **A**lgorithm.
+Later edit: This project was made as part of an application to 37signals, for which I was invited to participate in a take-home interview. Building the project was not a requirement, but something I wanted to do regardless. Due to this context, I've edited this first paragraph slightly, so that it makes more sense to read outside of that context.
 
-Data compression is fascinating. Using logic, one can take a certain amount of information, shrink it, and then decompress it again, losing (ideally) none of the original information. The premise of the project is this: if data compression did not exist, how would *I* build it?
+This is `ruca`, or **Ru**by **C**ompression **A**lgorithm. Data compression is fascinating. Using logic, one can take a certain amount of information, shrink it, and then decompress it again, losing (ideally) none of the original information. The premise of the project is this: if data compression did not exist, how would *I* build it?
 
 ## Aim
 
