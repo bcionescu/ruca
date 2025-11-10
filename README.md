@@ -4,7 +4,7 @@
 
 Later edit: This project was made as part of an application to 37signals, for which I was invited to participate in a take-home coding exercise. Building the project was not a requirement, but something I wanted to do regardless. As the original intro was directed at their hiring team, I've edited this first paragraph slightly, so that it makes more sense to read outside of that context.
 
-This is `ruca`, or **Ru**by **C**ompression **A**lgorithm. Data compression is fascinating. Using logic, one can take a certain amount of information, shrink it, and then decompress it again, losing (ideally) none of the original information. The premise of the project is this: if data compression did not exist, how would *I* build it?
+This is `Ruca`, or **Ru**by **C**ompression **A**lgorithm. Data compression is fascinating. Using logic, one can take a certain amount of information, shrink it, and then decompress it again, losing (ideally) none of the original information. The premise of the project is this: if data compression did not exist, how would *I* build it?
 
 ## Aim
 
