@@ -497,7 +497,7 @@ option_parser = OptionParser.new do |argument|
   end
 
   argument.on("-h", "--help", "Get help") do
-    puts option
+    puts option_parser
     exit
   end
 end
