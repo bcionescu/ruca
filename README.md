@@ -1,6 +1,4 @@
-# ruca
-
-![ruca.rb](/data/ruca.png)
+# Ruca
 
 Later edit: This project was made as part of an application to 37signals, for which I was invited to participate in a take-home coding exercise. Building the project was not a requirement, but something I wanted to do regardless. As the original intro was directed at their hiring team, I've edited this first paragraph slightly, so that it makes more sense to read outside of that context.
 
